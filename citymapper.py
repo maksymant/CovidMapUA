@@ -1,0 +1,28 @@
+def get_city_name(x):
+    return {
+        u"Винницкая": 'Vinnytsya',
+        u"Волынская": 'Volyn',
+        u"Днепро­петровская": 'Dnipropetrovs\'k',
+        u"Донецкая": 'Donets\'k',
+        u"Житомирская": 'Zhytomyr',
+        u"Закарпатская": 'Transcarpathia',
+        u"Запорожская": 'Zaporizhzhya',
+        u"Ивано-Франковская": 'Ivano-Frankivs\'k',
+        u"Киевская": 'Kiev',
+        u"Кирово­градская": 'Kirovohrad',
+        u"Луганская": 'Luhans\'k',
+        u"Львовская": 'L\'viv',
+        u"Николаевская": 'Mykolayiv',
+        u"Одесская": 'Odessa',
+        u"Полтавская": 'Poltava',
+        u"Ровенская": 'Rivne',
+        u"Сумская": 'Sumy',
+        u"Тернопольская": 'Ternopil\'',
+        u"Харьковская": 'Kharkiv',
+        u"Херсонская": 'Kherson',
+        u"Хмельницкая": 'Khmel\'nyts\'kyy',
+        u"Черкасская": 'Cherkasy',
+        u"Черновицкая": 'Chernivtsi',
+        u"Черниговская": 'Chernihiv',
+        u"г.Киев": 'Kiev City'
+    }.get(x, 'None')
