@@ -76,4 +76,3 @@ def generate_map(data: dict):
     ua_map.add_child(fg)
     ua_map.add_child(fl.LayerControl())
     ua_map.save('templates/map.html', close_file=True)
-    print('----MAP GENERATED----')

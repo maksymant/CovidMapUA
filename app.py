@@ -10,8 +10,7 @@ def render_map():
     update_geojson(data)
 
     generate_map(data)
-    print("----BEFORE RENDER----")
-    print(bar_data)
+
     return render_template('layout.html', bar_data=bar_data)
 
 
