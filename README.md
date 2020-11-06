@@ -1,4 +1,4 @@
-Covid Map UA
+Covid Map UA (https://covidmapua.herokuapp.com/)
 
 Simple project on Flask with BeautifulSoup4 and Folium that visually represents COVID spread and weight around Ukraine regions.
 
