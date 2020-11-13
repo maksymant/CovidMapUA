@@ -9,10 +9,7 @@ def render_map():
 
     update_geojson(data)
 
-    # generate_map(data)
     generate_map(bar_data)
-
-
 
     return render_template('map.html')
 

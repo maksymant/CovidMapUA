@@ -121,7 +121,6 @@ def generate_map(bar_data: dict):
     p.aspect_ratio = 1.5
     p.sizing_mode = 'scale_height'
 
-
     p.title.text = f"Covid19 UA Regions  |  Info date: {bar_data['curr_date']}  |  Total cases: {bar_data['total_cases']}  |  Current cases: {bar_data['curr_cases']}"
     p.title.align = "left"
     p.title.text_color = '#355070'
