@@ -60,7 +60,7 @@ def update_geojson(data: dict):
 
 
 def generate_map(bar_data: dict):
-    output_file("templates/map.html")
+    output_file("templates/map.html", title='Covid-19 UA Map')
 
     geodata = json.load(open("UA.geojson", 'r+', encoding='utf-8'))
 
