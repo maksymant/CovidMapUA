@@ -1,11 +1,12 @@
 import requests
 import time
 import json
-import folium as fl
-import branca.colormap as cm
 import re
 from bs4 import BeautifulSoup
 from citymapper import get_city_name
+from bokeh.models import ColorBar, LinearColorMapper, NumeralTickFormatter
+from bokeh.palettes import OrRd9
+from bokeh.plotting import figure, output_file, save
 
 
 def get_city_data():
@@ -58,21 +59,81 @@ def update_geojson(data: dict):
         read_file.truncate()
 
 
-def generate_map(data: dict):
-    ua_map = fl.Map(location=[48.6992149, 31.2844733], zoom_start=6)
-    fg = fl.FeatureGroup(name='Ukraine COVID-19 map')
+def generate_map(bar_data: dict):
+    output_file("templates/map.html")
 
-    infected_max = max([int(x) for x in data.values()])
-    infected_min = min([int(x) for x in data.values()])
-    colormap = cm.linear.Reds_09.scale(infected_min, infected_max)
+    geodata = json.load(open("UA.geojson", 'r+', encoding='utf-8'))
 
-    fg.add_child(fl.GeoJson(data=open('UA.geojson', 'r').read(),
-                            popup=fl.GeoJsonPopup(fields=['name', 'infected'], aliases=['Region', 'Infected']),
-                            style_function=lambda x: {'fillColor': colormap(int(x['properties']['infected'])),
-                                                      'fillOpacity': 0.7},
-                            highlight_function=lambda x: {'stroke': True, 'color': 'Blue', 'opacity': 0.2,
-                                                          'fillOpacity': 1}))
+    ua_xs = []
+    for region in geodata['features']:
+        if region['geometry']['type'] == "Polygon":
+            ua_xs.append([x[0] for x in region['geometry']['coordinates'][0]])
+        if region['geometry']['type'] == "MultiPolygon":
+            temp_lst = []
+            for nest in region['geometry']['coordinates']:
+                mult_ua_xs = [x[0] for x in nest[0]]
+                mult_ua_xs.append('nan')
+                temp_lst.append(mult_ua_xs)
+            flat_list = [item for sublist in temp_lst for item in sublist]
+            ua_xs.append(flat_list)
 
-    ua_map.add_child(fg)
-    ua_map.add_child(fl.LayerControl())
-    ua_map.save('templates/map.html', close_file=True)
+    ua_ys = []
+    for region in geodata['features']:
+        if region['geometry']['type'] == "Polygon":
+            ua_ys.append([x[1] for x in region['geometry']['coordinates'][0]])
+        if region['geometry']['type'] == "MultiPolygon":
+            temp_lst = []
+            for nest in region['geometry']['coordinates']:
+                mult_ua_ys = [x[1] for x in nest[0]]
+                mult_ua_ys.append('nan')
+                temp_lst.append(mult_ua_ys)
+            flat_list = [item for sublist in temp_lst for item in sublist]
+            ua_ys.append(flat_list)
+
+    region_names = [name['properties']['name'].replace("'", "") for name in geodata['features']]
+    region_infected = [int(infected['properties']['infected']) for infected in geodata['features']]
+
+    palette = tuple(reversed(OrRd9))
+    color_mapper = LinearColorMapper(palette=palette, low=min(region_infected), high=max(region_infected))
+
+    color_bar = ColorBar(color_mapper=color_mapper,
+                         label_standoff=10,
+                         formatter=NumeralTickFormatter(format='0,0'),
+                         width=10,
+                         border_line_color=None,
+                         location=(0, 0))
+
+    data = dict(
+        x=ua_xs,
+        y=ua_ys,
+        name=region_names,
+        infected=region_infected
+    )
+
+    tools = "pan,wheel_zoom,reset,hover,save"
+
+    p = figure(
+        tools=tools,
+        tooltips=[("Name", "@name"), ("Currently infected", "@infected")],
+        x_axis_location=None, y_axis_location=None,
+        toolbar_location='above'
+    )
+    p.aspect_ratio = 1.5
+    p.sizing_mode = 'scale_height'
+
+
+    p.title.text = f"Covid19 UA Map. |  Info date: {bar_data['curr_date']}  |  Total cases: {bar_data['total_cases']}  |  Current cases: {bar_data['curr_cases']}"
+    p.title.align = "left"
+    p.title.text_color = '#355070'
+    p.title.text_font_size = "15px"
+
+    p.grid.grid_line_color = None
+
+    p.patches(xs='x', ys='y', source=data, line_color="black", line_width=0.5,
+              fill_color={'field': 'infected',
+                          'transform': color_mapper},
+              fill_alpha=1
+              )
+
+    p.add_layout(color_bar, 'right')
+    save(p)

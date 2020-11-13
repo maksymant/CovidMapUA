@@ -9,9 +9,12 @@ def render_map():
 
     update_geojson(data)
 
-    generate_map(data)
+    # generate_map(data)
+    generate_map(bar_data)
 
-    return render_template('layout.html', bar_data=bar_data)
+
+
+    return render_template('map.html')
 
 
 if __name__ == '__main__':
