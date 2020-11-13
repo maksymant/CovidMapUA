@@ -114,7 +114,7 @@ def generate_map(bar_data: dict):
 
     p = figure(
         tools=tools,
-        tooltips=[("Name", "@name"), ("Currently infected", "@infected")],
+        tooltips=[("Name", "@name" + " region"), ("Currently infected", "@infected")],
         x_axis_location=None, y_axis_location=None,
         toolbar_location='above'
     )
@@ -122,7 +122,7 @@ def generate_map(bar_data: dict):
     p.sizing_mode = 'scale_height'
 
 
-    p.title.text = f"Covid19 UA Map. |  Info date: {bar_data['curr_date']}  |  Total cases: {bar_data['total_cases']}  |  Current cases: {bar_data['curr_cases']}"
+    p.title.text = f"Covid19 UA Regions  |  Info date: {bar_data['curr_date']}  |  Total cases: {bar_data['total_cases']}  |  Current cases: {bar_data['curr_cases']}"
     p.title.align = "left"
     p.title.text_color = '#355070'
     p.title.text_font_size = "15px"
